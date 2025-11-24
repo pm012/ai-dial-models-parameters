@@ -22,6 +22,9 @@ def run(
     conversation = Conversation()
     conversation.add_message(Message(Role.SYSTEM, DEFAULT_SYSTEM_PROMPT))
 
+    # Models that require streaming
+    streaming_models = ['claude-3-7-sonnet@20250219']
+
     if interactive:
         print("Type your question or 'exit' to quit.")
         while True:
@@ -35,6 +38,7 @@ def run(
                 messages=conversation.get_messages(),
                 print_request=print_request,
                 print_only_content=print_only_content,
+                stream=deployment_name in streaming_models,
                 **kwargs
             )
             conversation.add_message(ai_message)
@@ -47,6 +51,7 @@ def run(
             messages=conversation.get_messages(),
             print_request=print_request,
             print_only_content=print_only_content,
+            stream=deployment_name in streaming_models,
             **kwargs
         )
         print(ai_message.content)

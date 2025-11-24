@@ -1,11 +1,12 @@
 import json
 import os
-
 import requests
+from dotenv import load_dotenv
 
 from task.models.message import Message
 from task.models.role import Role
 
+load_dotenv()
 
 class DialClient:
     _endpoint: str
@@ -25,6 +26,7 @@ class DialClient:
             self, messages: list[Message],
             print_request: bool,
             print_only_content: bool,
+            stream: bool = False,            
             **kwargs
     ) -> Message:
         """
@@ -92,30 +94,62 @@ class DialClient:
         }
         request_data = {
             "messages": [msg.to_dict() for msg in messages],
+            "stream": stream,  # Pass to API payload if supported
             **kwargs,
         }
 
         if print_request:
             self._print_request(request_data, headers)
 
-        response = requests.post(url=self._endpoint, headers=headers, json=request_data, timeout=60)
+        response = requests.post(
+            url=self._endpoint,
+            headers=headers,
+            json=request_data,
+            timeout=60,
+            stream=stream  # This makes requests treat the response as a stream
+        )
 
         if response.status_code == 200:
-            data = response.json()
-            choices = data.get("choices", [])
-            if choices:
-                content = choices[0].get("message", {}).get("content")
-                print("\n" + "="*50 + " RESPONSE " + "="*50)
-                if print_only_content:
-                    print(content)
-                else:
-                    print(json.dumps(data, indent=2, sort_keys=True))
+            if stream:
+                # Streaming response handling
+                content = ""
+                print("\n" + "="*50 + " RESPONSE (streaming) " + "="*50)
+                for line in response.iter_lines():
+                    if line:
+                        try:
+                            data = json.loads(line.decode("utf-8"))
+                            # OpenAI-style streaming: look for 'choices' and 'delta'
+                            # For Anthropic, you may need to adjust this parsing!
+                            delta = ""
+                            if "choices" in data and "delta" in data["choices"][0]:
+                                delta = data["choices"][0]["delta"].get("content", "")
+                            elif "completion" in data:
+                                # Anthropic streaming format
+                                delta = data["completion"]
+                            content += delta
+                            if print_only_content:
+                                print(delta, end="", flush=True)
+                        except Exception as e:
+                            pass
+                print()  # Newline after streaming
                 print("="*108)
                 return Message(Role.AI, content)
-            raise ValueError("No Choice has been present in the response")
+            else:
+                # Regular JSON response
+                data = response.json()
+                choices = data.get("choices", [])
+                if choices:
+                    content = choices[0].get("message", {}).get("content")
+                    print("\n" + "="*50 + " RESPONSE " + "="*50)
+                    if print_only_content:
+                        print(content)
+                    else:
+                        print(json.dumps(data, indent=2, sort_keys=True))
+                    print("="*108)
+                    return Message(Role.AI, content)
+                raise ValueError("No Choice has been present in the response")
         else:
             raise Exception(f"HTTP {response.status_code}: {response.text}")
-
 
     def _print_request(self, request_data: dict, headers: dict):
         """Pretty print the request details."""
