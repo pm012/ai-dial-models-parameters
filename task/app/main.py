@@ -11,6 +11,8 @@ def run(
         deployment_name: str,
         print_request: bool = True,
         print_only_content: bool = False,
+        interactive: bool = True,
+        user_input: str = None,
         **kwargs
 ) -> None:
     client = DialClient(
@@ -20,16 +22,26 @@ def run(
     conversation = Conversation()
     conversation.add_message(Message(Role.SYSTEM, DEFAULT_SYSTEM_PROMPT))
 
-    print("Type your question or 'exit' to quit.")
-    while True:
-        user_input = input("> ").strip()
-    
-        if user_input.lower() == "exit":
-            print("Exiting the chat. Goodbye!")
-            break
-    
+    if interactive:
+        print("Type your question or 'exit' to quit.")
+        while True:
+            user_input = input("> ").strip()
+            if user_input.lower() == "exit":
+                print("Exiting the chat. Goodbye!")
+                break
+            conversation.add_message(Message(Role.USER, user_input))
+            print("AI:")
+            ai_message = client.get_completion(
+                messages=conversation.get_messages(),
+                print_request=print_request,
+                print_only_content=print_only_content,
+                **kwargs
+            )
+            conversation.add_message(ai_message)
+    else:
+        if not user_input:
+            raise ValueError("user_input must be provided in non-interactive mode")
         conversation.add_message(Message(Role.USER, user_input))
-
         print("AI:")
         ai_message = client.get_completion(
             messages=conversation.get_messages(),
@@ -37,4 +49,4 @@ def run(
             print_only_content=print_only_content,
             **kwargs
         )
-        conversation.add_message(ai_message)
+        print(ai_message.content)
