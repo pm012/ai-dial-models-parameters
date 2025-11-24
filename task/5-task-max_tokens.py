@@ -5,9 +5,12 @@ from task.app.main import run
 #  User massage: What is token when we are working with LLM?
 
 run(
-    deployment_name='gpt-4o',
-    # TODO:
+    deployment_name='gpt-4o',   
     #  Use `max_tokens` parameter with value 10
+    print_only_content=True,
+    user_input="What is token when we are working with LLM?",
+    max_tokens=10,
+    interactive=False
 )
 
 # Previously, we have seen that the `finish_reason` in choice was `stop`, but now it is `length`, and if you check the

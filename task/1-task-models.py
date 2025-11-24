@@ -2,7 +2,6 @@ from task.app.main import run
 
 # HINT: All available models you can find here: https://ai-proxy.lab.epam.com/openai/models
 
-# TODO:
 #  Try different models (`deployment_name`) with such user request:
 #  User massage: What LLMs can do?
 

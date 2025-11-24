@@ -11,7 +11,18 @@ from task.app.main import run
 run(
     deployment_name='gpt-4o',
     print_only_content=True,
-    # TODO:
+    user_input="What is an entropy in LLM's responses?",
+    presence_penalty=-0.5,
+    interactive=False
+    #  Use `presence_penalty` parameter with different range (-2.0 to 2.0)
+)
+
+run(
+    deployment_name='gpt-4o',
+    print_only_content=True,
+    user_input="What is an entropy in LLM's responses?",
+    presence_penalty=1.5,
+    interactive=False
     #  Use `presence_penalty` parameter with different range (-2.0 to 2.0)
 )
 

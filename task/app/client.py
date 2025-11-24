@@ -154,18 +154,18 @@ class DialClient:
     def _print_request(self, request_data: dict, headers: dict):
         """Pretty print the request details."""
         print("\n" + "="*50 + " REQUEST " + "="*50)
-        print(f"🔗 Endpoint: {self._endpoint}")
+        print(f" Endpoint: {self._endpoint}")
 
-        print("\n📋 Headers:")
-        safe_headers = headers.copy()
-        if "api-key" in safe_headers:
-            api_key = safe_headers["api-key"]
-            safe_headers["api-key"] = f"{api_key[:8]}...{api_key[-4:]}" if len(api_key) > 12 else "***"
+        #print("\n Headers:")
+        #safe_headers = headers.copy()
+        # if "api-key" in safe_headers:
+        #     api_key = safe_headers["api-key"]
+        #     safe_headers["api-key"] = f"{api_key[:8]}...{api_key[-4:]}" if len(api_key) > 12 else "***"
 
-        for key, value in safe_headers.items():
-            print(f"  {key}: {value}")
+        # for key, value in safe_headers.items():
+        #     print(f"  {key}: {value}")
 
-        print("\n📝 Request Body:")
+        print("\n Request Body:")
         messages = request_data.get("messages", [])
         other_params = {k: v for k, v in request_data.items() if k != "messages"}
 

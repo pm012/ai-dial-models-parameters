@@ -10,9 +10,20 @@ from task.app.main import run
 
 run(
     deployment_name='gpt-4o',
-    print_only_content=True,
-    # TODO:
+    print_only_content=True,    
     #  Use `frequency_penalty` parameter with different range (-2.0 to 2.0).
+    user_input="Explain the water cycle in simple terms for children",
+    frequency_penalty=-0.5,
+    interactive=False
+)
+
+run(
+    deployment_name='gpt-4o',
+    print_only_content=True,    
+    #  Use `frequency_penalty` parameter with different range (-2.0 to 2.0).
+    user_input="Explain the water cycle in simple terms for children",
+    frequency_penalty=1.9,
+    interactive=False
 )
 
 # Pay attention that when we set for `gpt-4o` frequency_penalty as -2.0 - the request is running too long,

@@ -80,5 +80,13 @@ must be provided as `{"custom_fields": {"configuration": {CUSTOM_PARAMETERS} }}`
 it is the last parameter described in documentation!
 
 ---
+python -m task.1-task-models > task1_res.txt
+python -m task.2-task-n > task2_res.txt 
+python -m task.3-task-temperature > task3_res.txt
+python -m task.4-task-seed > task4_res.txt
+python -m task.5-task-max_tokens > task5_res.txt
+python -m task.6-task-frequency_penalty > task6_res.txt
+python -m task.7-task-presence_penalty > task7_res.txt
+-----
 
 # <img src="dialx-banner.png">
